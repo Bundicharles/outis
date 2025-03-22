@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Blogs</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <img src="Scoffie.png" alt="Blog Platform Logo" class="logo">
+        <nav>
+            <a href="index.html" class="back-link">Back to Home</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Manage Blogs</h1>
+        <div id="blogsList" class="blog-grid"></div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000'; // Change to your API server if needed
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+
+            // Redirect if no token is found
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/user/blogs`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch blogs.');
+                }
+
+                const blogs = await response.json();
+                const blogsList = document.getElementById('blogsList');
+
+                // Render each blog as a card
+                blogsList.innerHTML = blogs.map(blog => `
+                    <div class="blog-card" data-blog-id="${blog.id}" data-blog-title="${blog.title}">
+                        <h3>${blog.title}</h3>
+                        <p>Category: ${blog.category}</p>
+                        <p>By ${blog.username} on ${new Date(blog.created_at).toLocaleDateString()}</p>
+                        <div class="metrics">
+                            <span>Likes: ${blog.likes || 0}</span>
+                            <span>Comments: ${blog.comment_count || 0}</span>
+                            <span>Views: ${blog.views || 0}</span>
+                        </div>
+                        <button class="submit-btn" onclick="deleteBlog(${blog.id})">Delete</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching blogs:', error);
+                alert('An error occurred while fetching your blogs.');
+            }
+        });
+
+        async function deleteBlog(id) {
+            const token = localStorage.getItem('token');
+
+            // Get the blog card by blog ID and its title
+            const blogCard = document.querySelector(`.blog-card[data-blog-id="${id}"]`);
+            const blogTitle = blogCard.getAttribute('data-blog-title');
+
+            // Confirm before deleting
+            const confirmDelete = confirm(`Are you sure you want to delete the blog: "${blogTitle}"?`);
+
+            if (!confirmDelete) {
+                return; // User cancelled
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/blogs/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    alert('Blog deleted successfully!');
+                    // Remove the blog card without refreshing the page
+                    blogCard.remove();
+                } else {
+                    alert('Failed to delete the blog. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error deleting blog:', error);
+                alert('An error occurred while deleting the blog.');
+            }
+        }
+    </script>
+</body>
+</html>

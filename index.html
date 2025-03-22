@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Platform</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <img src="Scoffie.png" alt="Blog Platform Logo" class="logo">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#" onclick="fetchAndRenderBlogs('')">All</a></li>
+                <li><a href="#" onclick="fetchAndRenderBlogs('Politics')">Politics</a></li>
+                <li><a href="#" onclick="fetchAndRenderBlogs('Lifestyle')">Lifestyle</a></li>
+                <li><a href="#" onclick="fetchAndRenderBlogs('Entertainment')">Entertainment</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <button id="loginBtn">Login</button>
+                <button id="signupBtn">Sign Up</button>
+            </div>
+            <div class="profile">
+                <img src="profile.png" alt="Profile" class="profile-icon" onclick="toggleProfileMenu()" onerror="this.src='https://via.placeholder.com/40';">
+                <div class="profile-menu" id="profileMenu" style="display: none;">
+                    <a href="create.html">Create Blog</a>
+                    <a href="manage.html">Manage Blogs</a>
+                    <a href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1>Blog Platform</h1>
+        <section class="blogs-section">
+            <h2>All Blogs</h2>
+            <div id="blogsList" class="blog-grid"></div>
+        </section>
+    </main>
+    <script src="/script.js"></script>
+</body>
+</html>
